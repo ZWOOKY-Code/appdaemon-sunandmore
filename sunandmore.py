@@ -4,7 +4,7 @@
 """
 import appdaemon.plugins.hass.hassapi as hass
 import appdaemon.plugins.hass
-from datetime import datetime , timedelta , timezone
+from datetime import datetime , timedelta , timezone , time
 import threading
 import math
 
@@ -141,11 +141,14 @@ class SunAndMore(hass.Hass):
         # self.log("--", level="INFO")
         # self.log("----------------------------------------------------------------", level="INFO")
         
-        self._sam_timer = self.run_in(self.sam_timer_callback, 1  ) ## immediat call for initializing everything
+        # self._sam_timer = self.run_in(self.sam_timer_callback, 1  ) ## immediat call for initializing everything
+        MY_time = time( 0, 0 , 0 )
+        self.run_minutely( self.sam_timer_callback , MY_time)
 
 
 
     def sam_timer_callback(self,  kwargs):
+        self.__single_threading_lock = threading.Lock()
         # self.log("sam callback " )
 
         # self.EasyCalc()                          ## easy version
@@ -182,11 +185,12 @@ class SunAndMore(hass.Hass):
 
         self.calculate( data , False )                                                  ## NOAA Version
         
-        restart = 58-datetime.now().second
-        if restart <=0:
-        	restart = 58
-        self._sam_timer = self.run_in(self.sam_timer_callback, restart   )
-
+#        restart = 58-datetime.now().second
+#        if restart <=0:
+#        	restart = 58
+#
+#        self.cancel_timer( self._sam_timer )
+#        self._sam_timer = self.run_in(self.sam_timer_callback, restart   )
 
 
     ###  NOAA CALC  ####################################################################
@@ -427,11 +431,11 @@ class SunAndMore(hass.Hass):
         if self._rising == 1 and 0==1:  # this is USELESS here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if self._brightness_start == 'astro' and self._elevation >= -18:
                 min_since_rise = ( data['hour']*60+data['minute'] ) -  self.get_min_from_HM(self._astr_rise)
-            if self._brightness_start == 'nauti' and self._elevation >= -12:
+            elif self._brightness_start == 'nauti' and self._elevation >= -12:
                 min_since_rise = ( data['hour']*60+data['minute'] ) -  self.get_min_from_HM(self._naut_rise)
-            if self._brightness_start == 'dawn' and self._elevation >= -6:
+            elif self._brightness_start == 'dawn' and self._elevation >= -6:
                 min_since_rise = ( data['hour']*60+data['minute'] ) -  self.get_min_from_HM(self._dawn_rise)
-            if self._brightness_start == 'rise' and self._elevation >= - 0.833:
+            elif self._brightness_start == 'rise' and self._elevation >= - 0.833:
                 min_since_rise = ( data['hour']*60+data['minute'] ) -  self.get_min_from_HM(self._sun_rise)
             self._min_since_rise = min_since_rise
 
@@ -516,16 +520,16 @@ class SunAndMore(hass.Hass):
         elif self._colortemp_start == 'rise' and self._elevation >= - 0.833:
             col_offset = self._colortemp_noon
         else:
-            col_offset = self._colortemp_noon
+            col_offset = self._colortemp_night
 
         brightness_default = self._brightness_night
         if self._elevation >= -18:
             brightness_default = self._brightness_astro
-        if self._elevation >= -12:
+        elif self._elevation >= -12:
             brightness_default = self._brightness_nauti
-        if self._elevation >= -6:
+        elif self._elevation >= -6:
             brightness_default = self._brightness_dawn
-        if self._elevation >= - 0.833:
+        elif self._elevation >= - 0.833:
             brightness_default = self._brightness_dayli
 
         brightness_offset  = self._brightness_night
@@ -540,7 +544,7 @@ class SunAndMore(hass.Hass):
         elif self._brightness_start == 'rise' and self._elevation >= - 0.833:
             brightness_offset = self._brightness_dayli
         else:
-            brightness_offset = self._brightness_dayli
+            brightness_offset = self._brightness_dawn
 
         
         # col_mired  = 0
@@ -552,7 +556,7 @@ class SunAndMore(hass.Hass):
         #     col_kelvin = col_default
         #     col_mired = 1000000 / col_kelvin
         # self.log('WHAT:  off:{} dai:{} sinc:{}' . format(col_offset, self._colortemp_noon ,self._min_since_rise ) )
-        if col_default != self._colortemp_night and self._min_since_rise > 0 :
+        if col_default != self._colortemp_night and self._min_since_rise >= 0 :
             everything = self.CircadianCalc( col_offset , self._colortemp_noon , self._length_of_day_m , self._min_since_rise )
             col_mired  = everything['current']['mired']
             col_kelvin = everything['current']['kelvin']
@@ -571,23 +575,24 @@ class SunAndMore(hass.Hass):
                 self._kelvin  = col_kelvin
 
         # self.log('####1 - A')
-        if brightness_default != self._brightness_night and self._min_since_rise > 0 :
-            # self.log('####1 - B')
+        if brightness_default != self._brightness_night and self._min_since_rise >= 0 :
+            self.log('####1 - B')
+            self.log('####1 - B offs:{} dail:{} . minsinsunrise:{}' .format( brightness_offset , self._brightness_dayli , self._min_since_rise )  )
             everything     = self.Brightness_Calc( brightness_offset , self._brightness_dayli , self._length_of_day_m , self._min_since_rise )
             brightness     = everything['current']['brightness']
             brightness_pct = everything['current']['brightness_pct']
             self._brightness     = brightness
             self._brightness_pct = brightness_pct
         else:
-            # self.log('####1 - C')
+            self.log('####1 - C')
             if self._brightness_dayli <= 100:
-                # self.log('####1 - D')
+                self.log('####1 - D')
                 brightness_pct     = int( brightness_default )
                 brightness         = int( brightness_pct /100 * 255 )        
                 self._brightness     = brightness
                 self._brightness_pct = brightness_pct
             else:
-                # self.log('####1 - E')
+                self.log('####1 - E')
                 brightness           = int( brightness_default )
                 brightness_pct       = int( brightness /255 * 100 )        
                 self._brightness     = brightness
@@ -597,34 +602,34 @@ class SunAndMore(hass.Hass):
 
           # round ((round( self._length_of_day , 5 ) * (( self._azimut - 180 )**180 + 175)),0)         
           # {{ ((states.sensor.length_of_day_factor.state | round (5))*((states.sun.sun.attributes.azimuth)-180)**2 + 175) | int }}
-                  
-        self.set_state("sensor."+self._sensor_name+"_mired"
+        try:
+            self.set_state("sensor."+self._sensor_name+"_mired"
 		                            , state =              self._mired, 
 		                               attributes = { 
                                       "friendly_name" : self._friendly_name + ' mired'  
                               , "unit_of_measurement" : 'mired'
                                                      })
-        self.set_state("sensor."+self._sensor_name+"_kelvin"
+            self.set_state("sensor."+self._sensor_name+"_kelvin"
 		                            , state =              self._kelvin, 
 		                               attributes = { 
                                       "friendly_name" : self._friendly_name + ' kelvin' 
                               , "unit_of_measurement" : 'kelvin'
                                                      })
-        self.set_state("sensor."+self._sensor_name+"_brightness"
+            self.set_state("sensor."+self._sensor_name+"_brightness"
 		                            , state =              self._brightness, 
 		                               attributes = { 
                                       "friendly_name" : self._friendly_name + ' brightness' 
                               , "unit_of_measurement" : 'brightness'
                                                      })
 
-        self.set_state("sensor."+self._sensor_name+"_brightness_pct"
+            self.set_state("sensor."+self._sensor_name+"_brightness_pct"
 		                            , state =              self._brightness_pct, 
 		                               attributes = { 
                                       "friendly_name" : self._friendly_name + ' brightness pct' 
                               , "unit_of_measurement" : 'brightness_pct'
                                                      })
                                                  
-        self.set_state("sensor."+self._sensor_name 
+            self.set_state("sensor."+self._sensor_name 
 		                            , state =              self._elevation, 
 		                               attributes = { 
                                       "friendly_name" :    self._friendly_name + ' info' 
@@ -671,8 +676,11 @@ class SunAndMore(hass.Hass):
                                     , "length_of_day_hours": self._length_of_day_h
 		                            , "unit_of_measurement" : 'elevation'
 		                              })
-
-
+            self.log("Successful written for sensor:{}".format( self._sensor_name ) , level="INFO")
+        except (TypeError, ValueError):
+            self.log("no access to the sensords ... will work next time ... please stand by", level="ERROR")
+            
+            
         # // sunrise line
         # if ($('#showsr').prop('checked')) {
         # if (rise.azimuth >= 0.0) {
@@ -776,7 +784,7 @@ class SunAndMore(hass.Hass):
     ## Circadian calculation #########################################################
     ## ###############################################################################
     def CircadianCalc(self , p_val_rise , p_val_noon , p_daylength , p_curr_minute  ):
-        self.log('VALS p_val_rise:{} p_val_noon:{} p_daylength:{} p_curr_minute:{}  '.format(  p_val_rise , p_val_noon , p_daylength , p_curr_minute  ) )
+        # self.log('VALS p_val_rise:{} p_val_noon:{} p_daylength:{} p_curr_minute:{}  '.format(  p_val_rise , p_val_noon , p_daylength , p_curr_minute  ) )
 
         
 #        if p_val_noon >1000:                                                  # we need to calculate based on mired 
@@ -824,7 +832,7 @@ class SunAndMore(hass.Hass):
             mired_m   =  int( val_m )
             mired_e   =  int( val_e )
             mired_c   =  int( val_c )
-            self.log('mired dl:{} dl2:{} dl_sq:{} dayf:{} s:{} m:{} e:{} '.format( daylength, daylength_2, daylength_sqrt, dayfactor_diff , val_s, val_m, val_e ) )
+            # self.log('mired dl:{} dl2:{} dl_sq:{} dayf:{} s:{} m:{} e:{} '.format( daylength, daylength_2, daylength_sqrt, dayfactor_diff , val_s, val_m, val_e ) )
  
         if p_val_noon >1000:  # this is KELVIN formula
             base = 'kelvin'
@@ -850,7 +858,7 @@ class SunAndMore(hass.Hass):
             mired_m   =  int(1000000 / val_m )
             mired_e   =  int(1000000 / val_e )
             mired_c   =  int(1000000 / val_c )
-            self.log('KELVIN dl:{} dl2:{} dl_sq:{} dayf:{} \ns:{} m:{} e:{} c:{} \nval_noon:{} val_rise:{} val_diff:{} '.format( daylength, daylength_2, daylength_sqrt, dayfactor_diff , val_s, val_m, val_e,val_c,val_noon,val_rise ,val_diff ) )
+            # self.log('KELVIN dl:{} dl2:{} dl_sq:{} dayf:{} \ns:{} m:{} e:{} c:{} \nval_noon:{} val_rise:{} val_diff:{} '.format( daylength, daylength_2, daylength_sqrt, dayfactor_diff , val_s, val_m, val_e,val_c,val_noon,val_rise ,val_diff ) )
 
 
         ret = {  
