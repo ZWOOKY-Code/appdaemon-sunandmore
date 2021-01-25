@@ -16,130 +16,138 @@ daellikon:
   colortemp_dawn: 2700
   colortemp_noon: 6500
   colortemp_start: nauti
-  brightness_night: 1
-  brightness_astro: 3
-  brightness_nauti: 5
-  brightness_dawn: 10
+  brightness_night: 2
+  brightness_astro: 4
+  brightness_nauti: 6
+  brightness_dawn: 8
   brightness_dayli: 255
   brightness_start: dawn
 
 
-tromso:
-  module: sunandmore
-  class: SunAndMore-NOOO
-  sensor_name: sl_tromso
-  friendly_name: Tromsø
-  lat: 69.64744107944895
-  long: 18.961450454217523
-  tz: Europe/Oslo
-  utcoffset: '+1:00'
-  colortemp_night: 540
-  colortemp_astro: 500
-  colortemp_nauti: 460
-  colortemp_dawn: 420
-  colortemp_noon: 180
-  colortemp_start: astro
-  brightness_night: 2
-  brightness_astro: 5
-  brightness_nauti: 10
-  brightness_dawn: 15
-  brightness_dayli: 90
-  brightness_start: astro
-  
-anchorage:
-  module: sunandmore
-  class: SunAndMore-NOOO
-  sensor_name: sl_anchorage
-  friendly_name: Anchorage
-  lat: 61.1083688
-  long: -150.0006912
-  tz: America/Anchorage
-  utcoffset: '-9:00'
-  colortemp_night: 540
-  colortemp_astro: 500
-  colortemp_nauti: 460
-  colortemp_dawn: 420
-  colortemp_noon: 180
-  colortemp_start: astro
-  brightness_night: 2
-  brightness_astro: 5
-  brightness_nauti: 10
-  brightness_dawn: 15
-  brightness_dayli: 70
-  brightness_start: nauti
+#  brightness_night: 1
+#  brightness_astro: 3
+#  brightness_nauti: 5
+#  brightness_dawn: 10
 
-cape_town:
-  module: sunandmore
-  class: SunAndMore-NOOO
-  sensor_name: sl_cape_town
-  friendly_name: Cape Town
-  lat: -33.9146509
-  long: 18.3758766
-  tz: Africa/Cape Town
-  utcoffset: '+2:00'
-  colortemp_night: 540
-  colortemp_astro: 500
-  colortemp_nauti: 460
-  colortemp_dawn: 420
-  colortemp_noon: 180
-  colortemp_start: astro
-  brightness_night: 2
-  brightness_astro: 5
-  brightness_nauti: 10
-  brightness_dawn: 15
-  brightness_dayli: 100
-  brightness_start: nauti
-
-hawaii:
-  module: sunandmore
-  class: SunAndMore-NOOO
-  sensor_name: sl_hawaii
-  friendly_name: Kahului
-  lat: 20.877901
-  long: -156.4914595
-  tz: Pacific/Honolulu
-  utcoffset: '-10:00'
-  colortemp_night: 540
-  colortemp_astro: 500
-  colortemp_nauti: 460
-  colortemp_dawn: 420
-  colortemp_noon: 180
-  colortemp_start: nauti
-  brightness_night: 2
-  brightness_astro: 5
-  brightness_nauti: 10
-  brightness_dawn: 15
-  brightness_dayli: 100
-  brightness_start: nauti
-
-longyearbyen:
-  module: sunandmore
-  class: SunAndMore-NOOO
-  sensor_name: sl_spitzbergen
-  friendly_name: Spitzbergen
-  lat: 78.2460852
-  long: 15.4633742
-  tz: Arctic/Longyearbyen
-  utcoffset: '+1:00'
-  colortemp_night: 540
-  colortemp_astro: 500
-  colortemp_nauti: 460
-  colortemp_dawn: 420
-  colortemp_noon: 180
-  colortemp_start: nauti
-  brightness_night: 2
-  brightness_astro: 5
-  brightness_nauti: 10
-  brightness_dawn: 15
-  brightness_dayli: 100
-  brightness_start: nauti
-
-
-
-# mcmurdo:
-#   module: sunandmore
-#   class: SunAndMore
-#   lat: -77.5180055
-#   long: 165.6455727
-#   tz: Antarctica/McMurdo
-#   utcoffset: '+13:00'
+#
+#
+#tromso:
+#  module: sunandmore
+#  class: SunAndMore-NOOO
+#  sensor_name: sl_tromso
+#  friendly_name: Tromsø
+#  lat: 69.64744107944895
+#  long: 18.961450454217523
+#  tz: Europe/Oslo
+#  utcoffset: '+1:00'
+#  colortemp_night: 540
+#  colortemp_astro: 500
+#  colortemp_nauti: 460
+#  colortemp_dawn: 420
+#  colortemp_noon: 180
+#  colortemp_start: astro
+#  brightness_night: 2
+#  brightness_astro: 5
+#  brightness_nauti: 10
+#  brightness_dawn: 15
+#  brightness_dayli: 90
+#  brightness_start: astro
+#  
+#anchorage:
+#  module: sunandmore
+#  class: SunAndMore-NOOO
+#  sensor_name: sl_anchorage
+#  friendly_name: Anchorage
+#  lat: 61.1083688
+#  long: -150.0006912
+#  tz: America/Anchorage
+#  utcoffset: '-9:00'
+#  colortemp_night: 540
+#  colortemp_astro: 500
+#  colortemp_nauti: 460
+#  colortemp_dawn: 420
+#  colortemp_noon: 180
+#  colortemp_start: astro
+#  brightness_night: 2
+#  brightness_astro: 5
+#  brightness_nauti: 10
+#  brightness_dawn: 15
+#  brightness_dayli: 70
+#  brightness_start: nauti
+#
+#cape_town:
+#  module: sunandmore
+#  class: SunAndMore-NOOO
+#  sensor_name: sl_cape_town
+#  friendly_name: Cape Town
+#  lat: -33.9146509
+#  long: 18.3758766
+#  tz: Africa/Cape Town
+#  utcoffset: '+2:00'
+#  colortemp_night: 540
+#  colortemp_astro: 500
+#  colortemp_nauti: 460
+#  colortemp_dawn: 420
+#  colortemp_noon: 180
+#  colortemp_start: astro
+#  brightness_night: 2
+#  brightness_astro: 5
+#  brightness_nauti: 10
+#  brightness_dawn: 15
+#  brightness_dayli: 100
+#  brightness_start: nauti
+#
+#hawaii:
+#  module: sunandmore
+#  class: SunAndMore-NOOO
+#  sensor_name: sl_hawaii
+#  friendly_name: Kahului
+#  lat: 20.877901
+#  long: -156.4914595
+#  tz: Pacific/Honolulu
+#  utcoffset: '-10:00'
+#  colortemp_night: 540
+#  colortemp_astro: 500
+#  colortemp_nauti: 460
+#  colortemp_dawn: 420
+#  colortemp_noon: 180
+#  colortemp_start: nauti
+#  brightness_night: 2
+#  brightness_astro: 5
+#  brightness_nauti: 10
+#  brightness_dawn: 15
+#  brightness_dayli: 100
+#  brightness_start: nauti
+#
+#longyearbyen:
+#  module: sunandmore
+#  class: SunAndMore-NOOO
+#  sensor_name: sl_spitzbergen
+#  friendly_name: Spitzbergen
+#  lat: 78.2460852
+#  long: 15.4633742
+#  tz: Arctic/Longyearbyen
+#  utcoffset: '+1:00'
+#  colortemp_night: 540
+#  colortemp_astro: 500
+#  colortemp_nauti: 460
+#  colortemp_dawn: 420
+#  colortemp_noon: 180
+#  colortemp_start: nauti
+#  brightness_night: 2
+#  brightness_astro: 5
+#  brightness_nauti: 10
+#  brightness_dawn: 15
+#  brightness_dayli: 100
+#  brightness_start: nauti
+#
+#
+#
+## mcmurdo:
+##   module: sunandmore
+##   class: SunAndMore
+##   lat: -77.5180055
+##   long: 165.6455727
+##   tz: Antarctica/McMurdo
+##   utcoffset: '+13:00'
+#
